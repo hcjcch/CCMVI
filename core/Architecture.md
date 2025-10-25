@@ -8,6 +8,17 @@
 - **{Name}Utils**: 工具类，里面都是 Kotlin 顶级函数
 - **{Name}UiState**: UI 的状态类，这个 UIState 驱动 View 的渲染
 
+## 文件目录
+- **{Name}ViewModel** 放到 viewmodel 文件夹中，没有就创建一个文件夹
+- **{Name}Repository** 放到 repository 文件夹中，没有就创建一个文件夹
+- **{Name}Activity** 放到 activity 文件夹中，没有就创建一个文件夹
+- **{Name}Screen** 放到 screen 文件夹中，没有就创建一个文件夹
+- **{Name}View** 放到 view 文件夹中，没有就创建一个文件夹
+- **{Name}Utils** 放到 utils 文件夹中，没有就创建一个文件夹
+- **{Name}UiState** 放到 ui 文件夹中，没有就创建一个文件夹
+- **以上所有的文件夹要放到一个业务的文件夹，比如以上所有文件都是登录相关的文件，那么必须把他们所属的文件夹放到登录这个文件夹下**
+- **所有文件夹和文件必须是英文命名**
+
 ## 架构目标
 - **数据驱动**：界面由数据状态变化驱动 UI 更新
 - **边界清晰**：各层职责明确，避免逻辑混杂
