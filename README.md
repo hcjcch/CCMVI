@@ -5,12 +5,20 @@
 ## 项目结构
 
 ```
-├── core/                    # 核心架构文档
-│   ├── Architecture.md     # MVI 架构规范
-│   └── KotlinCodeRules.md  # Kotlin 编码规范
-├── components/             # 组件规范文档
-├── mcp/                    # MCP 服务器实现
-└── knowledge-search        # 知识搜索命令行工具
+├── core/                           # 核心架构文档
+│   ├── Architecture.md           # MVI 架构规范
+│   └── KotlinCodeRules.md        # Kotlin 编码规范
+├── components/                     # 组件规范文档
+│   ├── Activity.md                 # Activity 组件规范
+│   ├── ViewModel.md                # ViewModel 组件规范
+│   ├── LiveData.md                 # LiveData 组件规范
+│   ├── KotlinFlow.md               # Kotlin Flow 组件规范
+│   └── UI.md                       # UI 组件规范
+├── android-knowledge-mcp/           # MCP 服务器实现
+└── android-knowledge-rag/           # 知识检索系统
+    ├── knowledge-search            # 知识搜索命令行工具
+    ├── src/                        # Python 源代码
+    └── requirements.txt            # Python 依赖
 ```
 
 ## MVI 架构核心
@@ -48,8 +56,12 @@
 
 ```bash
 # 启动 MCP 服务器
-cd mcp/
-python server.py
+cd android-knowledge-mcp/
+python run_server.py
+
+# 使用知识检索系统
+cd android-knowledge-rag/
+./knowledge-search "MVI架构"
 
 # 在 Claude Code 中使用 MCP 工具
 # - 搜索架构知识
@@ -63,11 +75,62 @@ python server.py
 - `chromadb>=0.4.0`: 向量数据库
 - `sentence-transformers>=2.2.0`: 句子嵌入模型
 
-## 使用指南
+## MCP 集成指南
 
-1. **架构设计**: 遵循 `core/Architecture.md` 中的 MVI 架构原则
-2. **编码规范**: 按照 `core/KotlinCodeRules.md` 编写代码
-3. **智能辅助**: 使用 MCP 工具实时获取架构指导和编码建议
+### 1. 环境准备
+
+```bash
+# 进入 MCP 服务器目录
+cd android-knowledge-mcp/
+
+# 创建并激活 Python 虚拟环境
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# 或 venv\Scripts\activate  # Windows
+
+# 安装依赖
+pip install -r requirements.txt
+```
+
+### 2. 配置 Claude Code
+
+在 Claude Code 配置文件中添加 MCP 服务器：
+
+```json
+{
+  "mcpServers": {
+    "android-knowledge": {
+      "command": "python",
+      "args": ["/path/to/android-knowledge-mcp/run_server.py"],
+      "cwd": "/path/to/android-knowledge-mcp/"
+    }
+  }
+}
+```
+
+### 3. 启动服务
+
+```bash
+# 方式 1: 直接启动 MCP 服务器
+python run_server.py
+
+# 方式 2: 通过 Claude Code 自动启动
+# 重启 Claude Code，MCP 服务器将自动连接
+```
+
+### 4. 使用 MCP 工具
+
+在 Claude Code 中可直接使用以下工具：
+
+- `android_knowledge_search`: 搜索 Android 架构知识
+- `get_coding_standards`: 获取 Kotlin 编码规范
+- `architecture_guidance`: 获取 MVI 架构指导
+
+### 5. 故障排除
+
+- **连接失败**: 检查 Python 路径和虚拟环境是否正确
+- **权限问题**: 确保 MCP 服务器文件有执行权限
+- **端口冲突**: 修改服务器配置中的端口号
 
 ---
 
