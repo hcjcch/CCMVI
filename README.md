@@ -1,110 +1,74 @@
 # Android 开发知识库
 
-这是一个基于 Android Compose + ViewModel MVI 架构的知识库项目，同时包含 RAG（检索增强生成）系统的实现。
+基于 Compose + ViewModel 的 MVI 架构规范与 MCP (Model Context Protocol) 集成。
 
 ## 项目结构
 
 ```
-.
-├── core/                           # 核心架构和规则
-│   ├── Architecture.md             # Compose + ViewModel MVI 架构文档
-│   └── KotlinCodeRules.md          # Kotlin 编码规范
-├── components/                     # 组件相关文档
-│   ├── Activity.md                 # Activity 组件规范
-│   ├── ViewModel.md                # ViewModel 组件规范
-│   ├── LiveData.md                 # LiveData 组件规范
-│   ├── KotlinFlow.md               # Kotlin Flow 组件规范
-│   └── UI.md                       # UI 组件规范
-└── android-knowledge-rag/          # RAG 系统实现
-    ├── src/                        # 源代码
-    ├── data/                       # 数据文件
-    ├── scripts/                    # 脚本文件
-    ├── tests/                      # 测试文件
-    ├── requirements.txt            # Python 依赖
-    └── venv/                       # Python 虚拟环境
+├── core/                    # 核心架构文档
+│   ├── Architecture.md     # MVI 架构规范
+│   └── KotlinCodeRules.md  # Kotlin 编码规范
+├── components/             # 组件规范文档
+├── mcp/                    # MCP 服务器实现
+└── knowledge-search        # 知识搜索命令行工具
 ```
 
-## 核心架构
+## MVI 架构核心
 
-### MVI（Model-View-Intent）架构
+- **单向数据流**: Repository → ViewModel → Screen → View
+- **数据驱动**: UI 由数据状态变化驱动
+- **职责清晰**: 各层组件职责明确，边界清晰
 
-本项目采用基于 Compose + ViewModel 的单向数据流架构：
+### 组件职责
 
-- **数据驱动**：界面由数据状态变化驱动 UI 更新
-- **边界清晰**：各层职责明确，避免逻辑混杂
-- **单向数据流**：数据只能从源头单向流动
-- **单向事件流**：事件通过回调形式向上传递
-
-### 核心组件
-
-#### Activity 层
-- 处理页面跳转协议
-- 初始化 ViewModel
-- 加载对应的 Entry Screen
-
-#### ViewModel 层
-- 作为数据源的唯一持有者
-- 从 Repository 获取数据
-- 持有 LiveData 传输数据
-
-#### Screen 层
-- 组装子 View 组件
-- 通过 ViewModel 中转事件
-- 分发数据给子组件
-
-#### View 层
-- 渲染 UI 界面
-- 定义用户交互事件
-- 保持纯函数特性
-
-## 文件命名规范
-
-- **{Name}ViewModel**: 负责管理数据状态的 ViewModel
-- **{Name}Repository**: 数据来源，负责网络和本地数据获取
-- **{Name}Activity**: 界面入口，Android 四大组件之一
-- **{Name}Screen**: Compose 入口函数，组合各种 View
-- **{Name}View**: 构成用户界面的小组合函数
-- **{Name}Utils**: 工具类，包含 Kotlin 顶级函数
-- **{Name}UiState**: UI 状态类，驱动 View 渲染
+| 层级 | 组件 | 职责 |
+|------|------|------|
+| Activity | {Name}Activity | 页面跳转、初始化 ViewModel |
+| ViewModel | {Name}ViewModel | 数据状态管理、LiveData 持有 |
+| Screen | {Name}Screen | 组装子组件、事件中转 |
+| View | {Name}View | UI 渲染、交互事件定义 |
+| Data | {Name}Repository | 数据获取（网络/本地） |
 
 ## 编码规范
 
-### 基本规则
-- **import**: 必须全量引入，不能使用 `import *`
-- **类型定义**:
-  - String 等对象类型必须声明为可空类型，初始化为 null
-  - 简单类型声明为非空类型，并初始化
-- **注释**:
-  - 类成员变量、函数、类使用多行注释 `/** */`
-  - 变量使用单行注释 `//`
+- **import**: 必须全量引入，禁用 `import *`
+- **类型定义**: 对象类型声明为可空并初始化为 null，简单类型声明为非空
+- **注释**: 类/函数用 `/** */`，变量用 `//`
+- **职责**: 函数和类都遵循单一职责原则
 
-### 设计原则
-- 函数单一职责
-- 类单一职责
-- 文件内容规则：一个文件只能有一个主类和多个内部类
+## MCP 集成
 
-## RAG 系统
+### MCP 服务器功能
 
-`android-knowledge-rag/` 目录包含了一个完整的 RAG 系统实现：
+- **智能搜索**: 基于 Android 架构知识的语义搜索
+- **代码规范**: 实时提供 MVI 架构和 Kotlin 编码规范
+- **最佳实践**: 返回符合项目标准的实现建议
 
-- **Python 虚拟环境**: 使用独立的虚拟环境进行 Python 开发
-- **知识检索**: 基于 Android 开发知识的智能检索系统
-- **数据处理**: 包含数据清洗、向量化等处理流程
+### 快速开始
+
+```bash
+# 启动 MCP 服务器
+cd mcp/
+python server.py
+
+# 在 Claude Code 中使用 MCP 工具
+# - 搜索架构知识
+# - 获取编码规范
+# - 查询最佳实践
+```
+
+### 依赖
+
+- `mcp>=1.0.0`: Model Context Protocol 核心库
+- `chromadb>=0.4.0`: 向量数据库
+- `sentence-transformers>=2.2.0`: 句子嵌入模型
 
 ## 使用指南
 
-### 查找知识
-使用项目中的 `knowledge-search` 工具来快速查找相关的开发知识和编码规范。
-
-### 遵循规范
-在开发过程中，请务必遵循 `knowledge/core/` 目录下定义的架构和编码规范。
-
-## 贡献指南
-
-1. 新增知识内容时，请按照现有的文档结构进行组织
-2. 编码时严格遵循 `KotlinCodeRules.md` 中定义的规范
-3. 架构设计请参考 `Architecture.md` 中的指导原则
+1. **架构设计**: 遵循 `core/Architecture.md` 中的 MVI 架构原则
+2. **编码规范**: 按照 `core/KotlinCodeRules.md` 编写代码
+3. **智能辅助**: 使用 MCP 工具实时获取架构指导和编码建议
 
 ---
 
-*本知识库旨在为 Android 开发提供统一的架构指导和编码规范，确保代码质量和开发效率。*
+*统一的 Android 架构指导和编码规范，确保代码质量和开发效率*
